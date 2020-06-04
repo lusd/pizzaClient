@@ -1,0 +1,34 @@
+.productsList {
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    background: white;
+    position: fixed;
+    overflow-y: auto;
+    max-height: calc(100% - 50px);
+    padding: 20px;
+    z-index: 1;
+}
+
+.orderCount {
+    color: white;
+    font-size: 20px;
+}
+
+.shoppingCard {
+    color: white;
+    font-size: 30px;
+}
+
+.closeButton {
+    font-size: 30px;
+    align-self: flex-end;
+}
+
+.productGrid {
+    display: grid;
+    grid-gap: 15px;
+    margin: 10px 0;
+    grid-template-columns: repeat(6, 1fr);
+    justify-items: center;
+}

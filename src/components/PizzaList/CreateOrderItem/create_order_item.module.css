@@ -1,0 +1,13 @@
+.error {
+    color: red;
+}
+
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.cost {
+    margin: 15px 0;
+}

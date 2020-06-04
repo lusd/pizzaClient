@@ -1,0 +1,32 @@
+.error {
+    color: red;
+}
+
+.orderContent {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    align-items: flex-start;
+}
+
+.inputGrid {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 5px 0;
+}
+
+.submitButton {
+    margin: 10px 0;
+    align-self: flex-start;
+}
+
+.link {
+    align-self: flex-end;
+}
+
+.productList {
+    width: 100%;
+}
