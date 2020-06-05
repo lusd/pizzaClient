@@ -66,7 +66,7 @@ const Basket = () => {
                 </Button>
 
               </Space>
-            </div> : ''}
+            </div> : <></>}
         </div>
       )
     }}

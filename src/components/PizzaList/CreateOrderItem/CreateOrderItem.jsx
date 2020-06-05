@@ -3,6 +3,7 @@ import { Modal, InputNumber, Space } from 'antd';
 import { Form, Field } from 'react-final-form';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import _get from 'lodash/get';
+import PropTypes from 'prop-types';
 
 import styles from './create_order_item.module.css';
 import * as sharedGraphql from '../../shared/graphql';
@@ -113,6 +114,15 @@ const CreateOrderItem = ({
         )} />
     </Modal>
   )
+}
+
+CreateOrderItem.propTypes = {
+  isModalOpen: PropTypes.bool.isRequired,
+  handleCancel: PropTypes.func.isRequired,
+  handleOk: PropTypes.func.isRequired,
+  pizza: PropTypes.object.isRequired,
+  createOrderItem: PropTypes.func.isRequired,
+  createOrder: PropTypes.func.isRequired,
 }
 
 export { CreateOrderItem };

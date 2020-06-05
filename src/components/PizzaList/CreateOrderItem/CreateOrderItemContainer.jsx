@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mutation } from '@apollo/react-components';
 import { useQuery } from '@apollo/react-hooks';
+import PropTypes from 'prop-types';
 
 import * as sharedGraphql from '../../shared/graphql';
 import { CreateOrderItem } from './CreateOrderItem';
@@ -30,4 +31,12 @@ const CreateOrderItemContainer = ({isModalOpen, handleCancel, handleOk, pizza}) 
   )
 }
 
+CreateOrderItemContainer.propTypes = {
+  isModalOpen: PropTypes.bool.isRequired,
+  handleCancel: PropTypes.func.isRequired,
+  handleOk: PropTypes.func.isRequired,
+  pizza: PropTypes.object.isRequired,
+};
+
 export { CreateOrderItemContainer };
+

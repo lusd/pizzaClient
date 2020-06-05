@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar, Spin } from 'antd';
 import { Mutation } from '@apollo/react-components';
 import { useQuery } from '@apollo/react-hooks';
+import PropTypes from 'prop-types';
 
 import styles from '../../Basket/basket.module.css';
 import { getPrice } from '../components';
@@ -49,4 +50,11 @@ const ProductsList = ({ orderInProcessId, productItems = [] }) => {
     )
 }
 
+ProductsList.propTypes = {
+    orderInProcessId: PropTypes.string,
+    productItems: PropTypes.array,
+};
+
 export { ProductsList };
+
+

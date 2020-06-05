@@ -7,7 +7,10 @@ import { Link } from 'react-router-dom';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Query } from '@apollo/react-components';
 import _get from 'lodash/get';
+import PropTypes from 'prop-types';
+import createDecorator from 'final-form-calculate';
 
+import { getFields } from './fields';
 import styles from './order.module.css';
 import * as sharedGraphql from '../shared/graphql';
 import { ProductsList, getTotalOrderCost, FallBack } from '../shared/components';
@@ -21,10 +24,16 @@ const Order = ({ updateOrder }) => {
   const { data: { exchangeRate } } = useQuery(sharedGraphql.EXCHANGE_RATE_QUERY);
   const history = useHistory();
 
-  const openNotification = () => {
+  const openNotification = (order) => {
     notification.open({
-      message: 'You order succesfully created',
-      icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+        duration: 0,
+        message: `Dear ${order.name}, you order with id=${order.id} succesfully created!`,
+        description: `
+            ${order.delivery ? ('address: ' + order.address + ';') : ''}
+            cost: ${getTotalOrderCost(order.orderItems, currentCurrency, exchangeRate, order.delivery)};
+            comment: ${order.comment};
+        `,
+        icon: <SmileOutlined style={{ color: '#108ee9' }} />,
     });
   };
 
@@ -32,19 +41,23 @@ const Order = ({ updateOrder }) => {
     const updatedFormData = { ...formData, id: orderInProcessId };
     const response = await updateOrder({ variables: { input: updatedFormData } });
     if (_get(response, ['data', 'updateOrder', 'id'], false)) {
-        openNotification();
+        openNotification(response.data.updateOrder);
         sessionStorage.removeItem('orderId');
         client.writeData({ data: { orderInProcessId: null }});
         history.push('/');
     }
   }
 
-  const required = value => (value ? undefined : 'Required');
-  const phoneCheck = value => {
-      if (value === undefined) return 'Required';
-      const patt = new RegExp(/^((\+7|7|8)+([0-9]){10})$/gm);
-      if (!patt.test(value)) return 'Phone number should be 11 digits and begin from +7, 7, or 8';
-  }
+  const decorator = createDecorator(
+      {
+          field: 'delivery',
+          updates: {
+              address: (deliveryValue) => {
+                  if (deliveryValue === false) return undefined;
+              }
+          }
+      }
+  )
 
   if (orderInProcessId === null) return <FallBack />;
 
@@ -58,72 +71,30 @@ const Order = ({ updateOrder }) => {
             if (_get(data, ['order', 'orderItems'], []).length === 0) return <FallBack />;
 
             return (
-                <Form onSubmit={onSubmit}>
+                <Form onSubmit={onSubmit} decorators={[ decorator ]}>
                     {({ handleSubmit, submitting, pristine, values }) => {
                         return (
                         <form onSubmit={handleSubmit}  className={styles.orderContent}>
 
-                            <Field
-                                name="name"
-                                validate={required}
-                            >
-                                {({ input, meta }) => (
-                                    <Space className={styles.inputGrid}>
-                                        <label>name</label>
-                                        <input {...input} type="text" placeholder="Enter your name" required/>
-                                        {meta.error && meta.touched && <span className={styles.error}>{meta.error}</span>}
-                                    </Space>
-                                )}
-                            </Field>
-                            <Field
-                                name="address"
-                                validate={required}
-                            >
-                                {({ input, meta }) => (
-                                    <Space className={styles.inputGrid}>
-                                        <label>Address</label>
-                                        <textarea {...input} type="text" placeholder="Address" required/>
-                                        {meta.error && meta.touched && <span className={styles.error}>{meta.error}</span>}
-                                    </Space>
-                                )}
-                            </Field>
-                            <Field
-                                name="phone"
-                                validate={phoneCheck}
-                            >
-                                {({ input, meta }) => (
-                                    <Space className={styles.inputGrid}>
-                                        <label>Phone</label>
-                                        <input {...input} type="phone" placeholder="Enter Your phone" required/>
-                                        {meta.error && meta.touched && <span className={styles.error}>{meta.error}</span>}
-                                    </Space>
-                                )}
-                            </Field>
-                            <Field
-                                name="comment"
-                                validate={required}
-                            >
-                                {({ input, meta }) => (
-                                    <Space className={styles.inputGrid}>
-                                        <label>Comment</label>
-                                        <textarea {...input} type="text" placeholder="Comment to order" required/>
-                                        {meta.error && meta.touched && <span className={styles.error}>{meta.error}</span>}
-                                    </Space>
-                                )}
-                            </Field>
-
-                            <Field
-                                name="delivery"
-                                type="checkbox"
-                            >
-                                {({ input }) => (
-                                    <Space className={styles.inputGrid}>
-                                        <label>Delivery </label>
-                                        <input {...input} type="checkbox"/>
-                                    </Space>
-                                )}
-                            </Field>
-
+                            {getFields(values).map(field => {
+                                if (field === false) return '';
+                                return (
+                                    <Field
+                                        name={field.name}
+                                        validate={field.validate ? field.validate : false}
+                                        type={field.type}
+                                    >
+                                        {({ input, meta }) => (
+                                            <Space className={styles.inputGrid}>
+                                                <label>{field.label}</label>
+                                                <input {...input} type={field.type} placeholder={field.placeholder ? field.placeholder : ''}/>
+                                                {meta.error && meta.touched && <span className={styles.error}>{meta.error}</span>}
+                                            </Space>
+                                        )}
+                                    </Field>
+                                )
+                            })}
+                            
                             <h4>Products</h4>
                             <div className={styles.productList}>
                                 <ProductsList orderInProcessId={orderInProcessId} productItems={data.order.orderItems}/>
@@ -145,5 +116,9 @@ const Order = ({ updateOrder }) => {
     </Query>
   )
 }
+
+Order.propTypes = {
+    updateOrder: PropTypes.func.isRequired,
+};
 
 export { Order };

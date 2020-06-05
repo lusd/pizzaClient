@@ -11,14 +11,13 @@ const Currency = () => {
 
     const client = useApolloClient();
 
-    const currencyList = ['USD', 'EUR'];
-
     const { currentCurrency } = client.readQuery({
         query: sharedGraphql.CURRENT_CURRENCY_QUERY,
     })
 
     const [currency, setCurrency] = useState(currentCurrency);
 
+    const currencyList = ['USD', 'EUR'];
     const menu = (
         <Menu>
             {currencyList.map((item, index) => (
@@ -29,7 +28,7 @@ const Currency = () => {
                 </Menu.Item>
             ))}
         </Menu>
-    )
+    );
 
     const toggleCurrency = (currency) => {
         setCurrency(currency);
