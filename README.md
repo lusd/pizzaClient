@@ -1,3 +1,8 @@
+
+Backend is laravel + lighthouse + sqlite, you can find here: https://github.com/lusd/pizza-server
+
+Here you can find deployed version with backend https://morning-island-53764.herokuapp.com/
+
 To install project dependencies use 
 
 $yarn
@@ -7,8 +12,6 @@ To start application use
 $yarn start 
 
 It uses graphQL and Apollo client to connect API. 
-Backend is laravel + lighthouse + sqlite, you can find here: https://github.com/lusd/pizza-server
-Here you can find deployed version with backend https://morning-island-53764.herokuapp.com/
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
